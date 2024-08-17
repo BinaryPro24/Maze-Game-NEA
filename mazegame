@@ -1,0 +1,134 @@
+import pygame
+import sys
+from tkinter import *
+
+def display_text():
+    label3.configure(text=user_entry1.get())
+    label4.configure(text=user_entry2.get())
+    user_entry1
+
+root = Tk()
+label1 = Label(root,text="Username")
+label1.pack()
+user_entry1 = Entry(root)
+user_entry1.pack()
+label2 = Label(root,text="Password")
+label2.pack()
+user_entry2 = Entry(root)
+user_entry2.pack()
+
+button1 = Button(root,text="Login",command=display_text)
+button1.pack()
+label3 = Label(root,text="")
+label3.pack()
+
+button2 = Button(root,text="Reset Password",command=display_text)
+button2.pack()
+label4 = Label(root,text="")
+label4.pack()
+root.mainloop()
+
+
+
+
+
+pygame.init()
+
+# Screen Set Up
+screen_width, screen_height = 700, 700
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("Maze Game Prototype")
+clock = pygame.time.Clock()
+
+
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+ORANGE = (255, 165, 0)
+
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.Surface((24, 24))
+        self.image.fill(ORANGE)
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = 0, 0
+
+    def update(self, keys):
+        if keys[pygame.K_a]:  # Move left
+            self.rect.x -= 24
+        if keys[pygame.K_d]:  # Move right
+            self.rect.x += 24
+        if keys[pygame.K_w]:  # Move up
+            self.rect.y -= 24
+        if keys[pygame.K_s]:  # Move down
+            self.rect.y += 24
+
+
+def setup_maze(level):
+    for y in range(len(level)):
+        for x in range(len(level[y])):
+            character = level[y][x]
+            screen_x = 24 * x
+            screen_y = 24 * y
+
+            if character == "X":
+                pygame.draw.rect(screen, WHITE, (screen_x, screen_y, 24, 24))
+            
+
+
+player = Player()
+
+
+level_1 = [
+    "XXXXXXXXXXXXXXXXXXXXXXXXX",
+    "X  XXX  XXXXXXX      XXXX",
+    "X   XXXXXXX  XXXXXX  XXXX",
+    "XP       XX  XXXXXX  XXXX",
+    "X       XX  XXX        XX",
+    "XXXXXX  XX  XXX        XX",
+    "XXXXXX  XX  XXXXXX  XXXXX",
+    "XXXXXX  XX    XXXX  XXXXX",
+    "X  XXX        XXXX  XXXXX",
+    "X  XXX  XXXXXXXXXXXXXXXXX",
+    "X         XXXXXXXXXXXXXXX",
+    "X                XXXXXXXX",
+    "XXXXXXXXXXXX     XXXXX  X",
+    "XXXXXXXXXXXXXXX  XXXXX  X",
+    "XXX XXXXXXXXXXX         X",
+    "XXX                     X",
+    "XXX         XXXXXXXXXXXXX",
+    "XXXXXXXXXX  XXXXXXXXXXXXX",
+    "XXXXXXXXXX              X",
+    "XX   XXXXX              X",
+    "XX   XXXXXXXXXXXXX  XXXXX",
+    "XX    YXXXXXXXXXXX  XXXXX",
+    "XX          XXXX        X",
+    "XXXX                    X",
+    "XXXXXXXXXXXXXXXXXXXXXXXXX"
+]
+
+setup_maze(level_1)
+
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    keys = pygame.key.get_pressed()
+    player.update(keys)
+
+    screen.fill(BLACK)  # Fill the screen with black
+    
+    setup_maze(level_1)
+    
+    screen.blit(player.image, player.rect)
+
+    pygame.display.flip()
+    clock.tick(60)
+
+
+pygame.quit()
+sys.exit()
